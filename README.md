@@ -1,2 +1,2 @@
 # image-server
-image servers and transformations
+image server with image transformations
