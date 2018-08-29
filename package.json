@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "node --inspect index.js"
   },
   "keywords": [
     "imageserver",
@@ -19,6 +20,7 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.0",
     "babel-preset-es2015": "^6.24.1",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "gm": "^1.23.1"
   }
 }
