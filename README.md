@@ -1,5 +1,4 @@
-# image-server
-image servers and transformations
+# image server with image transformations
 - Resize Image
 - Blur Image
 - Image Quality
