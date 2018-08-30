@@ -1,4 +1,5 @@
 import gm from 'gm';
+import {defaultArguments} from './defaultArguments';
 
 const imageMagic = gm.subClass({imageMagick: true});
 
@@ -45,15 +46,33 @@ export const getProcessArray = (transformations) => {
 			arguments: [transformations.b, 20]
 		});
 	}
-	retArray.push({
-		name: 'setFormat',
-		arguments: [transformations.f ? transformations.f : 'jpg']
-	});
+	if(transformations.e){
+		if(Array.isArray(transformations.e)){
+			transformations.e.forEach(val => {
+				retArray.push({
+					name: val,
+					arguments: defaultArguments[val] ? defaultArguments[val] : []
+				});
+			})
+		}
+		else{
+			retArray.push({
+				name: transformations.e,
+				arguments: [1]
+			});
+		}
+	}
+	if(transformations.f){
+		retArray.push({
+			name: 'setFormat',
+			arguments: [transformations.f]
+		});
+	}
 	return retArray;
 }
 
 export const getImagePath = (req) => {
-	let index = req.params.fileName ? 1 : 2;
+	let index = (req.params.transformations && req.params.transformations.indexOf('tr:') !== -1) ? 2 : 1;
 	return `./images/${req.url.split('/').slice(index).join('/')}`;
 }
 
@@ -66,7 +85,13 @@ export const getTransformations = (reqParam) => {
 		transformations = reqParam.split('tr:')[1];
 		return transformations.split(',').reduce((obj, val) => {
 			propertyList = val.split('-');
-			obj[propertyList[0]] = propertyList[1];
+			if(obj[propertyList[0]]){
+				obj[propertyList[0]] = [obj[propertyList[0]]];
+				obj[propertyList[0]].push(propertyList[1])
+			}
+			else{
+				obj[propertyList[0]] = propertyList[1];
+			}
 			return obj;
 		}, {});
 	}
