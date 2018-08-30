@@ -1,4 +1,4 @@
-# image server with image transformations
+# image server
 - Resize Image
 - Blur Image
 - Image Quality
