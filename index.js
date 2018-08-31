@@ -3,3 +3,4 @@ require('babel-register')({
 });
 
 require('./server');
+// require('./services/nameGeneratorService');

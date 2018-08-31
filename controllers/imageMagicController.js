@@ -1,8 +1,12 @@
 import gm from 'gm';
 import {defaultArguments} from './defaultArguments';
 import {getDetailPromise} from '../services/imageDetailService';
+import {nameEncoderService, nameDecoderService} from '../services/nameGeneratorService';
+import path from 'path';
+import fs from 'fs';
 
 const imageMagic = gm.subClass({imageMagick: true});
+const imageCache = {};
 
 export const imageMagicController = (req, res, next) => {
 	
@@ -10,32 +14,52 @@ export const imageMagicController = (req, res, next) => {
 	let transformations = {};
 	let imagePath = getImagePath(req);
 	let processArray = [];
-	
-	Promise.all([
-		getDetailPromise(imagePath, 'size'), 
-		getDetailPromise(imagePath, 'format')
-	]).then(dataArr => {
+	let mainProcess = {};
+	let finalImageFormat = '';
+	let finalFileName = '';
 
-		imageDetails.size = dataArr.shift();
-		imageDetails.format = dataArr.shift();
+	if(imageCache[req.url]){
+		imagePath = `./cache/${nameEncoderService(req.url)}.${imageCache[req.url]}`;
+		getFileFromPath(req, res, imagePath, {
+			'Content-Type': `image/${imageCache[req.url]}`, 
+			'Cache-Control': 'public, max-age=31557600'
+		});
+	}
+	else{
+		Promise.all([
+			getDetailPromise(imagePath, 'size'), 
+			getDetailPromise(imagePath, 'format')
+		]).then(dataArr => {
 
-		transformations = getTransformations(req.params.transformations);
-		processArray = getProcessArray(transformations, imageDetails);
+			imageDetails.size = dataArr.shift();
+			imageDetails.format = dataArr.shift();
 
-		processArray.reduce((cumulativeProcess, processObj) => {
-			return cumulativeProcess[processObj.name](...processObj.arguments);
-		}, imageMagic(imagePath)).stream((err, stdout) => {
-	        if(err) {
-	        	return next(err);
-	        }
-			 res.writeHead(200, {
-				'Content-Type': `image/${transformations.f ? transformations.f : imageDetails.format.toLowerCase()}`,
-				'Cache-Control': 'public, max-age=31557600'
-			});
-	  		stdout.pipe(res);
-	    });
-		
-	});
+			finalImageFormat = transformations.f ? transformations.f : imageDetails.format.toLowerCase()
+			finalFileName = `./cache/${nameEncoderService(req.url)}.${finalImageFormat}`;
+
+			transformations = getTransformations(req.params.transformations);
+			processArray = getProcessArray(transformations, imageDetails);
+
+			processArray.reduce((cumulativeProcess, processObj) => {
+				return cumulativeProcess[processObj.name](...processObj.arguments);
+			}, imageMagic(imagePath)).write(finalFileName, (error, data) => {
+		    	if(error) {
+		    		console.log(error);
+		    		getFileFromPath(req, res, 'default.jpg', {
+						'Content-Type': `image/jpg`,
+						'Cache-Control': 'public, max-age=31557600'
+					});
+		    	}
+		    	else{
+		    		getFileFromPath(req, res, finalFileName, {
+						'Content-Type': `image/${finalImageFormat}`,
+						'Cache-Control': 'public, max-age=31557600'
+					});
+		    		imageCache[req.url] = finalImageFormat;
+		    	}
+		    });
+		});
+	}
 
 }
 
@@ -149,4 +173,18 @@ export const getTransformations = (reqParam) => {
 		}, {});
 	}
 	return transformationObj;
+}
+
+export const getFileFromPath = (req, res, filePath, contentType)  => {
+	fs.readFile(filePath, function(err, data){
+		if(err){
+			imageCache[req.url] = false;
+			imageMagicController(req, res);
+		}
+		else{
+			res.writeHead(200, contentType);
+			res.write(data);
+			res.end();
+		}
+	});
 }
