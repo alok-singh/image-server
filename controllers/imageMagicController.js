@@ -45,10 +45,10 @@ export const imageMagicController = (req, res, next) => {
 			}, imageMagic(imagePath)).write(finalFileName, (error, data) => {
 		    	if(error) {
 		    		console.log(error);
-		    		getFileFromPath(req, res, 'default.jpg', {
-						'Content-Type': `image/jpg`,
+		    		getFileFromPath(req, res, './default.webp', {
+						'Content-Type': `image/webp`,
 						'Cache-Control': 'public, max-age=31557600'
-					});
+					}, 404);
 		    	}
 		    	else{
 		    		getFileFromPath(req, res, finalFileName, {
@@ -58,6 +58,12 @@ export const imageMagicController = (req, res, next) => {
 		    		imageCache[req.url] = finalImageFormat;
 		    	}
 		    });
+		}).catch(error => {
+			console.log(error);
+			getFileFromPath(req, res, './default.webp', {
+				'Content-Type': `image/webp`,
+				'Cache-Control': 'public, max-age=31557600'
+			}, 404);
 		});
 	}
 
@@ -175,14 +181,14 @@ export const getTransformations = (reqParam) => {
 	return transformationObj;
 }
 
-export const getFileFromPath = (req, res, filePath, contentType)  => {
+export const getFileFromPath = (req, res, filePath, contentType, status) => {
 	fs.readFile(filePath, function(err, data){
 		if(err){
 			imageCache[req.url] = false;
 			imageMagicController(req, res);
 		}
 		else{
-			res.writeHead(200, contentType);
+			res.writeHead(status ? status : 200, contentType);
 			res.write(data);
 			res.end();
 		}
