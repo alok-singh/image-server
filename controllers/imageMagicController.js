@@ -154,7 +154,7 @@ export const getProcessArray = (transformations, {size}) => {
 }
 
 export const getImagePath = (req) => {
-	let index = (req.params.transformations && req.params.transformations.indexOf('tr:') !== -1) ? 2 : 1;
+	let index = (req.params.transformations && req.params.transformations.indexOf('mn:') !== -1) ? 2 : 1;
 	let path = `./images/${req.url.split('/').slice(index).join('/')}`;
 	return path;
 }
@@ -164,13 +164,16 @@ export const getTransformations = (reqParam) => {
 	let transformations = '';
 	let transformationObj = {};
 	let propertyList = [];
-	if(reqParam && reqParam.indexOf('tr:') !== -1){
-		transformations = reqParam.split('tr:')[1];
+	if(reqParam && reqParam.indexOf('mn:') !== -1){
+		transformations = reqParam.split('mn:')[1];
 		return transformations.split(',').reduce((obj, val) => {
 			propertyList = val.split('-');
-			if(obj[propertyList[0]]){
-				obj[propertyList[0]] = [obj[propertyList[0]]];
+			if(obj[propertyList[0]] && Array.isArray(obj[propertyList[0]])){
 				obj[propertyList[0]].push(propertyList[1])
+			}
+			else if(obj[propertyList[0]]){
+				obj[propertyList[0]] = [obj[propertyList[0]]];
+				obj[propertyList[0]].push(propertyList[1]);
 			}
 			else{
 				obj[propertyList[0]] = propertyList[1];
