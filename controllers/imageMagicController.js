@@ -4,9 +4,9 @@ import {getDetailPromise} from '../services/imageDetailService';
 import {nameEncoderService, nameDecoderService} from '../services/nameGeneratorService';
 import path from 'path';
 import fs from 'fs';
+import {imageCache} from './imageCacheController';
 
 const imageMagic = gm.subClass({imageMagick: true});
-const imageCache = {};
 
 export const imageMagicController = (req, res, next) => {
 	
