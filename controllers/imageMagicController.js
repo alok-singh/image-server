@@ -4,9 +4,11 @@ import {getDetailPromise} from '../services/imageDetailService';
 import {nameEncoderService, nameDecoderService} from '../services/nameGeneratorService';
 import path from 'path';
 import fs from 'fs';
+import packageJSON from '../package.json';
 import {imageCache} from './imageCacheController';
 
 const imageMagic = gm.subClass({imageMagick: true});
+const {imageDirectory} = packageJSON;
 
 export const imageMagicController = (req, res, next) => {
 	
@@ -19,6 +21,7 @@ export const imageMagicController = (req, res, next) => {
 	let finalFileName = '';
 
 	if(imageCache[req.url]){
+		console.log('served from cache');
 		imagePath = `./cache/${nameEncoderService(req.url)}.${imageCache[req.url]}`;
 		getFileFromPath(req, res, imagePath, {
 			'Content-Type': `image/${imageCache[req.url]}`, 
@@ -26,6 +29,7 @@ export const imageMagicController = (req, res, next) => {
 		});
 	}
 	else{
+		console.log('not served from cache');
 		Promise.all([
 			getDetailPromise(imagePath, 'size'), 
 			getDetailPromise(imagePath, 'format')
@@ -155,7 +159,7 @@ export const getProcessArray = (transformations, {size}) => {
 
 export const getImagePath = (req) => {
 	let index = (req.params.transformations && req.params.transformations.indexOf('mn:') !== -1) ? 2 : 1;
-	let path = `./images/${req.url.split('/').slice(index).join('/')}`;
+	let path = `${imageDirectory}/${req.url.split('/').slice(index).join('/')}`;
 	return path;
 }
 
