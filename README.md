@@ -9,6 +9,6 @@
 # how to run
 - brew install imagemagick --with-webp
 - npm install && npm run init
-- move images to images folder
+- add image directory path to package.json
 - npm start
 - localhost:8080/([manipulations])/image/path
