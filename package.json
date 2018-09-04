@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "imageDirectory": "",
+  "imageDirectory": "./images",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "node --inspect index.js",
-    "init": "mkdir cache && mkdir images",
-    "clear": "rm -rf cache && npm run init"
+    "init": "mkdir cache",
+    "clear": "rm -rf cache && mkdir cache"
   },
   "keywords": [
     "imageserver",

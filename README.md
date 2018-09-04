@@ -1,9 +1,8 @@
 # image server
 - Resize Image
-- Blur Image
 - Image Quality
 - Image Format
-- Image Effects (sepia, contrast, sharpen)
+- Image Effects (sepia, contrast, sharpen, blur)
 
 
 # how to run

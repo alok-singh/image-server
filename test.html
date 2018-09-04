@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Image Server Testing</title>
+    <style type="text/css">
+    body {
+        font-family: fantasy;
+        font-size: 12px;
+    }
+
+    .collection {
+        display: flex;
+        align-items: center;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="test-case">
+        <h2>pure image</h2>
+        <img src="/default.jpg">
+    </div>
+    <h1>Base Transformations</h1>
+    <div class="collection">
+        <div class="test-case">
+            <h2>/mn:h-200/</h2>
+            <img src="/mn:h-200/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:w-200/</h2>
+            <img src="/mn:w-200/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:e-contrast/</h2>
+            <img src="/mn:e-contrast/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:e-sharpen/</h2>
+            <img src="/mn:e-sharpen/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:e-blur/</h2>
+            <img src="/mn:e-blur/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:e-sepia/</h2>
+            <img src="/mn:e-sepia/default.jpg">
+        </div>
+    </div>
+    <h1>2 Combination Transformations</h1>
+    <div class="collection">
+        <div class="test-case">
+            <h2>/mn:h-200,w-300/</h2>
+            <img src="/mn:h-200,w-300/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:h-200,e-contrast/</h2>
+            <img src="/mn:h-200,e-contrast/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:h-200,e-sharpen/</h2>
+            <img src="/mn:h-200,e-sharpen/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:h-200,e-blur/</h2>
+            <img src="/mn:h-200,e-blur/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:h-200,e-sepia/</h2>
+            <img src="/mn:h-200,e-sepia/default.jpg">
+        </div>
+    </div>
+    <div class="collection">
+        <div class="test-case">
+            <h2>/mn:w-200,e-contrast/</h2>
+            <img src="/mn:w-200,e-contrast/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:w-200,e-sharpen/</h2>
+            <img src="/mn:w-200,e-sharpen/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:w-200,e-blur/</h2>
+            <img src="/mn:w-200,e-blur/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:w-200,e-sepia/</h2>
+            <img src="/mn:w-200,e-sepia/default.jpg">
+        </div>
+    </div>
+    <div class="collection">
+        <div class="test-case">
+            <h2>/mn:e-contrast,e-sharpen/</h2>
+            <img src="/mn:e-contrast,e-sharpen/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:e-contrast,e-blur/</h2>
+            <img src="/mn:e-contrast,e-blur/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:e-contrast,e-sepia/</h2>
+            <img src="/mn:e-contrast,e-sepia/default.jpg">
+        </div>
+    </div>
+    <div class="collection">
+        <div class="test-case">
+            <h2>/mn:e-sharpen,e-blur/</h2>
+            <img src="/mn:e-sharpen,e-blur/default.jpg">
+        </div>
+        <div class="test-case">
+            <h2>/mn:e-sharpen,e-sepia/</h2>
+            <img src="/mn:e-sharpen,e-sepia/default.jpg">
+        </div>
+    </div>
+    <div class="collection">
+        <div class="test-case">
+            <h2>/mn:e-blur,e-sepia/</h2>
+            <img src="/mn:e-blur,e-sepia/default.jpg">
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>

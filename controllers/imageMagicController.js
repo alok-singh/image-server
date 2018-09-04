@@ -38,15 +38,15 @@ export const imageMagicController = (req, res, next) => {
 			imageDetails.size = dataArr.shift();
 			imageDetails.format = dataArr.shift();
 
+			transformations = getTransformations(req.params.transformations);
+			processArray = getProcessArray(transformations, imageDetails);
+			
 			finalImageFormat = transformations.f ? transformations.f : imageDetails.format.toLowerCase()
 			finalFileName = `./cache/${nameEncoderService(req.url)}.${finalImageFormat}`;
 
-			transformations = getTransformations(req.params.transformations);
-			processArray = getProcessArray(transformations, imageDetails);
-
 			processArray.reduce((cumulativeProcess, processObj) => {
 				return cumulativeProcess[processObj.name](...processObj.arguments);
-			}, imageMagic(imagePath)).write(finalFileName, (error, data) => {
+			}, imageMagic(imagePath).colorspace('sRGB')).write(finalFileName, (error, data) => {
 		    	if(error) {
 		    		console.log(error);
 		    		getFileFromPath(req, res, './default.webp', {
@@ -126,12 +126,6 @@ export const getProcessArray = (transformations, {size}) => {
 			arguments: [transformations.q]
 		});
 	}
-	if(transformations.b){
-		retArray.push({
-			name: 'blur',
-			arguments: [transformations.b, 20]
-		});
-	}
 	if(transformations.e){
 		if(Array.isArray(transformations.e)){
 			transformations.e.forEach(val => {
@@ -144,7 +138,7 @@ export const getProcessArray = (transformations, {size}) => {
 		else{
 			retArray.push({
 				name: transformations.e,
-				arguments: [1]
+				arguments: defaultArguments[transformations.e]
 			});
 		}
 	}
@@ -160,6 +154,7 @@ export const getProcessArray = (transformations, {size}) => {
 export const getImagePath = (req) => {
 	let index = (req.params.transformations && req.params.transformations.indexOf('mn:') !== -1) ? 2 : 1;
 	let path = `${imageDirectory}/${req.url.split('/').slice(index).join('/')}`;
+	path = path.split('?').shift();
 	return path;
 }
 
