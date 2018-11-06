@@ -154,7 +154,7 @@ export const getProcessArray = (transformations, {size}) => {
 export const getImagePath = (req) => {
 	let index = (req.params.transformations && req.params.transformations.indexOf('mn:') !== -1) ? 2 : 1;
 	let path = `${imageDirectory}/${req.url.split('/').slice(index).join('/')}`;
-	path = path.split('?').shift();
+	path = decodeURI(path.split('?').shift());
 	return path;
 }
 
