@@ -17,6 +17,12 @@ routes.get('/test', (req, res) => {
 	res.end();
 })
 
+routes.get('/cv:name', (req, res) => {
+	res.writeHead(200, 'image/jpg');
+	res.write(fs.readFileSync('./cv' + (req.params.name ? req.params.name : "")));
+	res.end();
+})
+
 routes.get('/pdf', (req, res) => {
 	pdfConverterController(req, res);
 })

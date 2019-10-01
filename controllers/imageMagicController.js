@@ -2,7 +2,6 @@ import gm from 'gm';
 import {defaultArguments} from './defaultArguments';
 import {getDetailPromise} from '../services/imageDetailService';
 import {nameEncoderService, nameDecoderService} from '../services/nameGeneratorService';
-import path from 'path';
 import fs from 'fs';
 import packageJSON from '../package.json';
 import {imageCache} from './imageCacheController';
@@ -82,7 +81,8 @@ export const getProcessArray = (transformations, {size}) => {
 	
 	if(transformations.h && transformations.w){
 		if(transformations.h*aspectRatio > transformations.w){
-			/*  if we transform image with required height 
+			/*  
+				if we transform image with required height 
 				final width of image is more than required after resize 
 			*/
 			argList = [
