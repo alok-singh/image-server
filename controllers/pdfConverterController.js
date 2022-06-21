@@ -1,36 +1,36 @@
 import Canvas from 'canvas';
 import fs from 'fs';
 import path from 'path';
-import request from 'request';
+import { getScreenShotFromUrl } from './puppeteer';
 
-export const pdfConverterController = (req, res) => {
-	let {query} = req;
-	let url = query.url;
-	let fileName = url.split('/').pop();
+export const pdfConverterController = async (req, res) => {
+	const { query } = req;
+	const { url, height, width } = query;
+	const fileName = url.split('/').pop().split('.').shift();
+	const saveAddress = path.resolve('./temp', `${fileName}.png`);
 
-	request.head(url, function(err) {
-        request(url).pipe(fs.createWriteStream(path.resolve('./temp', fileName))).on('close', () => {
-			fs.readFile(path.resolve('./temp', fileName), function(err, data) {
-		        if (err){
-					res.writeHead(500, {'content-type' : 'text'});
-			    	res.write(err);
-			    	res.end();
-					throw err;
-		        }
-		        
-		        let img = new Canvas.Image(); // Create a new Image
-				img.src = data;
+	const imageSavedSuccessfully = await getScreenShotFromUrl(url, saveAddress, height, width);
 
-		        let canvas = new Canvas.Canvas(img.width, img.height, 'pdf');
-		        let ctx = canvas.getContext('2d');
-		        
-		        ctx.drawImage(img, 0, 0, img.width, img.height);
+	if (imageSavedSuccessfully) {
+		fs.readFile(saveAddress, (err, data) => {
+			if (err) {
+				res.writeHead(500, { 'content-type': 'text' });
+				res.write(err);
+				res.end();
+				throw err;
+			}
 
-		        res.writeHead(200, {'content-type' : 'application/pdf'});
-		    	res.write(canvas.toBuffer());
-		    	res.end();  
-		    });
+			const img = new Canvas.Image();
+			img.src = data;
 
-        });
-    });
+			const canvas = new Canvas.Canvas(img.width, img.height, 'pdf');
+			const ctx = canvas.getContext('2d');
+
+			ctx.drawImage(img, 0, 0, img.width, img.height);
+
+			res.writeHead(200, { 'content-type': 'application/pdf' });
+			res.write(canvas.toBuffer());
+			res.end();
+		});
+	}
 }
